@@ -1,0 +1,56 @@
+##The following instructions take into account that the credentials json is updated and some minor steps like key deployment and known host validation are already done between all nodes.
+
+
+vagrant up
+
+
+
+###
+###MGMT node
+###
+
+
+cd test-tenant
+terraform init
+terraform plan
+terraform apply
+source ansible-load-credentials.sh
+gcloud auth login
+
+
+## retrieve public ip of master node and add it to /etc/hosts, zone will be needed later.
+gcloud compute instances list
+
+
+## config ssh
+
+gcloud compute config-ssh
+
+## (if not working remove previous key with ssh-keygen -f "/home/vagrant/.ssh/known_hosts" -R "node_name" )
+
+ansible-playbook ansible-loadbalancer-playbook.yml
+
+ansible-playbook ansible-webserver-playbook.yml
+
+ansible-playbook ansible-hadoop-playbook.yml 
+
+
+## update /tasks/webxscript.sh to mach cluster zones and bucket name
+## and then run
+
+ansible-playbook ansible-webxscript-playbook.yml
+
+gcloud ssh mycluster-m
+sudo chmod +x emmiter_verbose.exe 
+
+##
+## Simulate execution
+##
+
+gcloud compute scp tasks/d_emitter.dat web1
+gcloud compute ssh web1
+sudo chmod +x ./webxscript.sh
+gcloud auth login
+
+./webxscript.sh
+

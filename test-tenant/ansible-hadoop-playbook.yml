@@ -1,0 +1,25 @@
+#Before using facts you will need to take them from hosts.
+- hosts: clusters
+  gather_facts: True
+  become: yes
+  become_method: sudo
+  tasks:
+    - copy:
+        src: ./tasks/d_emitter.dat
+        dest: /home/vagrant/d_emitter.dat
+
+#    - copy: 
+#        src: ./tasks/python_project.py
+#        dest: /home/vagrant/python_project.py
+#        mode: u=rwX,g=rwX,o=rwX
+    
+    - copy: 
+        src: ./tasks/emitter_verbose.exe
+        dest: /home/vagrant/emitter_verbose.exe
+        mode: u=rwX,g=rwX,o=rwX
+
+    - copy: 
+        src: ./tasks/map_red.py
+        dest: /home/vagrant/map_red.py
+        mode: u=rwX,g=rwX,o=rwX
+

@@ -1,0 +1,4 @@
+ 5 15 30 50
+EOD This 'EOD' (end-of-data) mandatory. Other data, e.g.: 5 5 5 5
+ 25 0.2 :zmu, sigma
+ 1e7 0 :trials_lg, iseed
