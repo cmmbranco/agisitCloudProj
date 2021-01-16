@@ -1,0 +1,11 @@
+#Before using facts you will need to take them from hosts.
+- hosts: webs
+  gather_facts: True
+  become: yes
+  become_method: sudo
+  tasks:
+    - copy: 
+        src: ./tasks/webxscript.sh
+        dest: /home/vagrant/webxscript.sh
+        mode: u=rwX,g=rwX,o=rwX
+    

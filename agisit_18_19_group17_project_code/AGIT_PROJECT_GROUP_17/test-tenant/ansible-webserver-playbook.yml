@@ -1,0 +1,59 @@
+- name: Configure webserver instances
+  hosts: webs
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: install apps
+      apt: name={{ item }} update_cache=yes state=latest allow_unauthenticated=yes
+      with_items:
+        - nginx
+      register: conf
+    - debug:
+        var: conf
+
+    - name: write nginx.conf
+      template: src=./templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
+      notify: restart nginx
+
+    - name: write /etc/nginx/sites-available/default
+      template: src=./templates/default-site.j2 dest=/etc/nginx/sites-available/default
+      notify: restart nginx
+
+    - name: deploy website content
+      template: src=./templates/index.html.j2 dest=/usr/share/nginx/html/index.html
+
+    - copy:
+        src: ./server/html
+        dest: /usr/share/nginx
+
+    - name: Install the package "pythone-pip"
+      apt:
+        name: python3-pip
+
+    - pip:
+        name: flask
+        executable: pip3
+
+    - pip:
+        name: flask_restful
+        executable: pip3
+
+    - pip:
+        name: flask_cors
+        executable: pip3
+
+    - copy:
+        src: ./server/server
+        dest: /usr/share/
+        mode: u=rwX,g=rwX,o=rwX
+
+    - name: execute install script
+      command: /usr/share/server.py
+      async: True
+      poll: 0
+
+  # The handler is common to the nginx installation steps
+  handlers:
+    - name: restart nginx
+      service: name=nginx state=restarted
